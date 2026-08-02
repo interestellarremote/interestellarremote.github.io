@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Política de privacidade do Interestellar Remote e do Interestellar Remote Bridge.">
+  <title>Política de privacidade — Interestellar Remote</title>
+  <link rel="stylesheet" href="assets/styles.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="container">
+      <a class="brand" href="./">
+        <img src="assets/icon.png" alt="Interestellar Remote">
+        <span>
+          <small>Interestellar Remote</small>
+          <strong>Política de privacidade</strong>
+        </span>
+      </a>
+      <nav class="nav">
+        <a href="./">Página inicial</a>
+        <a href="security.html">Segurança</a>
+        <a href="terms.html">Termos</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="prose">
+    <div class="container">
+      <article class="card">
+        <h1>Política de privacidade</h1>
+        <p>Última atualização: 2 de agosto de 2026.</p>
+
+        <h2>1. Escopo</h2>
+        <p>
+          Esta política cobre o aplicativo Android Interestellar Remote, o companion para Windows Interestellar Remote Bridge e esta página oficial de distribuição.
+        </p>
+
+        <h2>2. Dados tratados</h2>
+        <p>
+          O sistema precisa tratar dados mínimos para autenticação, pareamento e sincronização operacional. Isso pode incluir:
+        </p>
+        <ul>
+          <li>identificadores de dispositivo e sessão;</li>
+          <li>estado online/offline;</li>
+          <li>metadados técnicos de sincronização e compatibilidade;</li>
+          <li>informações necessárias para autenticação via Google/Firebase;</li>
+          <li>artefatos e mensagens cifradas transportadas entre app e Bridge.</li>
+        </ul>
+
+        <h2>3. Conteúdo cifrado</h2>
+        <p>
+          Prompts, respostas, comandos, logs e artefatos de trabalho são projetados para trafegar cifrados entre os dispositivos pareados. O provedor de backend recebe envelopes cifrados e metadados operacionais mínimos, mas não deve receber a chave raiz em texto puro.
+        </p>
+
+        <h2>4. Dados locais</h2>
+        <p>
+          O Bridge mantém configuração e estado local no computador do usuário. O aplicativo Android pode manter histórico local, rascunhos, preferências e chaves protegidas pelo Android Keystore. O Bridge usa mecanismos de proteção locais do Windows, como DPAPI, para credenciais e segredos armazenados no dispositivo.
+        </p>
+
+        <h2>5. Compartilhamento</h2>
+        <p>
+          Não há intenção de vender dados pessoais. Dados podem ser processados por provedores de infraestrutura necessários ao funcionamento do produto, como autenticação, banco de dados, armazenamento e notificações.
+        </p>
+
+        <h2>6. Responsabilidade do usuário</h2>
+        <p>
+          O usuário é responsável por parear apenas computadores confiáveis, revisar as permissões concedidas no painel local e restringir o acesso remoto às pastas realmente necessárias.
+        </p>
+
+        <h2>7. Contato e mudanças</h2>
+        <p>
+          Mudanças relevantes nesta política devem ser refletidas nesta página oficial. Esta política é um documento operacional e não substitui aconselhamento jurídico.
+        </p>
+      </article>
+    </div>
+  </main>
+</body>
+</html>

@@ -1,0 +1,13 @@
+{
+  "rootKey": "AAECAwQFBgcICQoLDA0ODxAREhMUFRYXGBkaGxwdHh8",
+  "deviceId": "dddddddddddddddddddddddddddddddd",
+  "conversationId": "conversation-1",
+  "sequence": 7,
+  "type": "SEND_PROMPT",
+  "keyVersion": 1,
+  "nonce": "AAECAwQFBgcICQoL",
+  "derivedKey": "qQVEA5Y1uH5i4Lydt2adMxRqH4VK70xUAZcI2VgpdJI",
+  "plaintext": "{\"prompt\":\"ola\"}",
+  "ciphertext": "yX67_VD7rVPF3zmUZjsawd1CQ2jmkrn_WSpHw6hl7FM"
+}
+

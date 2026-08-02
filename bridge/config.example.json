@@ -1,0 +1,8 @@
+{
+  "firebase_database_url": "https://SEU-PROJETO-default-rtdb.firebaseio.com",
+  "firebase_api_key": "SUA_CHAVE_WEB_PUBLICA",
+  "functions_base_url": "https://REGIAO-SEU-PROJETO.cloudfunctions.net",
+  "firebase_storage_bucket": "SEU-PROJETO.firebasestorage.app",
+  "device_name": "Meu computador",
+  "dashboard_port": 8765
+}

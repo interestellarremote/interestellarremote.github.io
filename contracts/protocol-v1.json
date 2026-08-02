@@ -1,0 +1,30 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://antigravity-remote.local/protocol-v1.json",
+  "title": "Antigravity Remote Protocol v1",
+  "type": "object",
+  "required": ["version", "messageId", "deviceId", "conversationId", "sequence", "type", "createdAt", "expiresAt", "keyVersion", "nonce", "ciphertext"],
+  "properties": {
+    "version": { "const": 1 },
+    "messageId": { "type": "string", "format": "uuid" },
+    "deviceId": { "type": "string", "minLength": 16, "maxLength": 128 },
+    "conversationId": { "type": "string", "minLength": 1, "maxLength": 128 },
+    "sequence": { "type": "integer", "minimum": 1 },
+    "type": {
+      "enum": [
+        "CREATE_CONVERSATION", "ARCHIVE_CONVERSATION", "SEND_PROMPT", "CANCEL_TURN",
+        "RUN_BUILD", "CANCEL_BUILD", "APPROVAL_DECISION", "LIST_DIRECTORIES", "CREATE_DIRECTORY", "ADD_PROJECT",
+        "LIST_PROJECT_FILES", "CREATE_PROJECT_DIRECTORY", "READ_PROJECT_FILE", "GET_PROJECT_STATUS", "SYNC",
+        "SNAPSHOT", "TEXT_DELTA", "THOUGHT_DELTA", "TOOL_CALL", "APPROVAL_REQUEST",
+        "BUILD_LOG", "BUILD_RESULT", "ARTIFACT", "TURN_COMPLETE", "ERROR", "HEARTBEAT", "DIRECTORY_LIST",
+        "PROJECT_FILE_LIST", "PROJECT_FILE_CONTENT", "PROJECT_STATUS", "ACK"
+      ]
+    },
+    "createdAt": { "type": "integer", "minimum": 0 },
+    "expiresAt": { "type": "integer", "minimum": 0 },
+    "keyVersion": { "type": "integer", "minimum": 1 },
+    "nonce": { "type": "string", "minLength": 16 },
+    "ciphertext": { "type": "string", "minLength": 16 }
+  },
+  "additionalProperties": false
+}

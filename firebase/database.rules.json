@@ -1,0 +1,59 @@
+{
+  "rules": {
+    ".read": false,
+    ".write": false,
+    "deviceOwners": {
+      "$deviceId": {
+        ".read": "auth != null && (data.val() === auth.uid || auth.token.deviceId === $deviceId)",
+        ".write": false
+      }
+    },
+    "deviceStatus": {
+      "$deviceId": {
+        ".read": "auth != null && root.child('deviceOwners').child($deviceId).val() === auth.uid",
+        ".write": "auth != null && auth.token.deviceId === $deviceId && auth.token.type === 'bridge'",
+        ".validate": "newData.hasChildren(['online','lastSeen']) && newData.child('lastSeen').isNumber()"
+      }
+    },
+    "mailboxes": {
+      "$deviceId": {
+        "commands": {
+          ".read": "auth != null && auth.token.deviceId === $deviceId && auth.token.type === 'bridge'",
+          "$commandId": {
+            ".write": "auth != null && (root.child('deviceOwners').child($deviceId).val() === auth.uid || auth.token.deviceId === $deviceId)",
+            ".validate": "!newData.exists() || (newData.child('deviceId').val() === $deviceId && newData.child('messageId').val() === $commandId && newData.child('version').val() === 1 && newData.child('expiresAt').isNumber() && newData.child('expiresAt').val() > now && newData.child('ciphertext').isString())"
+          }
+        },
+        "events": {
+          ".indexOn": ["sequence"],
+          ".read": "auth != null && root.child('deviceOwners').child($deviceId).val() === auth.uid",
+          "$eventId": {
+            ".write": "auth != null && (auth.token.deviceId === $deviceId || root.child('deviceOwners').child($deviceId).val() === auth.uid)",
+            ".validate": "!newData.exists() || (newData.child('deviceId').val() === $deviceId && newData.child('messageId').val() === $eventId && newData.child('version').val() === 1 && newData.child('ciphertext').isString())"
+          }
+        },
+        "acks": {
+          "$commandId": {
+            ".read": "auth != null && root.child('deviceOwners').child($deviceId).val() === auth.uid",
+            ".write": "auth != null && auth.token.deviceId === $deviceId && auth.token.type === 'bridge'"
+          }
+        }
+      }
+    },
+    "notifications": {
+      "$deviceId": {
+        "$eventId": {
+          ".read": false,
+          ".write": "auth != null && auth.token.deviceId === $deviceId && auth.token.type === 'bridge'",
+          ".validate": "!newData.exists() || (newData.child('type').isString() && newData.child('createdAt').isNumber())"
+        }
+      }
+    },
+    "users": {
+      "$uid": {
+        ".read": "auth != null && auth.uid === $uid",
+        ".write": "auth != null && auth.uid === $uid"
+      }
+    }
+  }
+}

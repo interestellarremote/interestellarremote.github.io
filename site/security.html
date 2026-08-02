@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Práticas e avisos de segurança do Interestellar Remote e do Interestellar Remote Bridge.">
+  <title>Segurança — Interestellar Remote</title>
+  <link rel="stylesheet" href="assets/styles.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="container">
+      <a class="brand" href="./">
+        <img src="assets/icon.png" alt="Interestellar Remote">
+        <span>
+          <small>Interestellar Remote</small>
+          <strong>Segurança</strong>
+        </span>
+      </a>
+      <nav class="nav">
+        <a href="./">Página inicial</a>
+        <a href="privacy.html">Privacidade</a>
+        <a href="terms.html">Termos</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="prose">
+    <div class="container">
+      <article class="card">
+        <h1>Práticas de segurança</h1>
+        <p>Última atualização: 2 de agosto de 2026.</p>
+
+        <h2>1. Fonte oficial do instalador</h2>
+        <p>
+          Baixe o Bridge somente por esta página oficial do projeto. Antes de executar o arquivo, confira o hash SHA-256 publicado junto do download.
+        </p>
+
+        <h2>2. Assinatura digital</h2>
+        <p>
+          O instalador atual ainda não possui assinatura digital de código. Por isso, o Windows pode exibir alertas de reputação ou SmartScreen. Trate esse comportamento como esperado até a distribuição passar a usar code signing.
+        </p>
+
+        <h2>3. Pareamento</h2>
+        <p>
+          O QR Code de pareamento deve ser gerado localmente no computador e escaneado apenas pelo usuário que controla ambos os dispositivos. Não reutilize QR Codes recebidos de terceiros.
+        </p>
+
+        <h2>4. Escopo de acesso</h2>
+        <p>
+          Autorize no Bridge apenas as pastas e projetos estritamente necessários. O aplicativo remoto deve operar somente dentro do escopo explicitamente liberado no painel local.
+        </p>
+
+        <h2>5. Endpoints confiáveis</h2>
+        <p>
+          Mesmo com criptografia em trânsito, a segurança final depende do seu endpoint. Se o computador estiver comprometido, o pareamento também fica comprometido.
+        </p>
+
+        <h2>6. Resposta a incidentes</h2>
+        <p>
+          Se você suspeitar de uso indevido, revogue o computador pareado no app, desative o Bridge localmente e gere um novo pareamento após revisar o ambiente.
+        </p>
+      </article>
+    </div>
+  </main>
+</body>
+</html>

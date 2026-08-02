@@ -1,0 +1,15 @@
+<resources>
+    <style name="Theme.AntigravityRemote.Launch" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">#05070D</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/icon</item>
+        <item name="postSplashScreenTheme">@style/Theme.AntigravityRemote</item>
+    </style>
+
+    <style name="Theme.AntigravityRemote" parent="android:style/Theme.Material.NoActionBar">
+        <item name="android:fontFamily">sans</item>
+        <item name="android:windowLightStatusBar">false</item>
+        <item name="android:windowLightNavigationBar">false</item>
+        <item name="android:statusBarColor">#080C15</item>
+        <item name="android:navigationBarColor">#05070D</item>
+    </style>
+</resources>

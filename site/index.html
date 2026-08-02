@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Página oficial do Interestellar Remote Bridge com download para Windows, requisitos, avisos de segurança e políticas.">
+  <title>Interestellar Remote Bridge — Página oficial</title>
+  <link rel="stylesheet" href="assets/styles.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="container">
+      <a class="brand" href="./">
+        <img src="assets/icon.png" alt="Interestellar Remote">
+        <span>
+          <small>Interestellar Remote</small>
+          <strong>Companion independente para PC</strong>
+        </span>
+      </a>
+      <nav class="nav">
+        <a href="#download">Download</a>
+        <a href="#requirements">Requisitos</a>
+        <a href="#security">Segurança</a>
+        <a href="privacy.html">Privacidade</a>
+        <a href="terms.html">Termos</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="container hero-grid">
+        <div class="card pad">
+          <p class="eyebrow">Página oficial</p>
+          <h1>Conecte seu computador ao <span>Interestellar Remote</span> com segurança.</h1>
+          <p class="lead">
+            O Bridge roda no seu PC, abre o painel local de pareamento e conecta o aplicativo Android ao seu próprio workspace com transporte cifrado e autorização local por pastas.
+          </p>
+
+          <div class="badge-row">
+            <span class="badge">Windows 10/11</span>
+            <span class="badge">Instalação por usuário</span>
+            <span class="badge">Sem admin obrigatório</span>
+            <span class="badge">Pareamento por QR Code</span>
+          </div>
+
+          <div class="button-row" id="download">
+            <a class="button" href="downloads/InterestellarRemoteSetup-0.2.6.exe" download>Baixar para Windows</a>
+            <a class="button-secondary" href="downloads/SHA256SUMS.txt">Ver hash SHA-256</a>
+          </div>
+
+          <div class="notice">
+            <strong>Como baixar com segurança.</strong>
+            <p class="small">
+              Faça o download apenas por esta página oficial. O instalador atual ainda não possui assinatura digital; por isso, publiquei o hash SHA-256 para conferência antes da execução.
+            </p>
+            <p class="small">
+              Este é um projeto independente e não afiliado, endossado ou distribuído pelo Google.
+            </p>
+          </div>
+        </div>
+
+        <aside class="card pad">
+          <p class="eyebrow">Resumo rápido</p>
+          <ul class="meta-list">
+            <li><span class="meta-label">Arquivo:</span> InterestellarRemoteSetup-0.2.6.exe</li>
+            <li><span class="meta-label">Tamanho:</span> 24,180,589 bytes</li>
+            <li><span class="meta-label">Instalação:</span> %LOCALAPPDATA%\Programs\Antigravity Remote</li>
+            <li><span class="meta-label">Privilégios:</span> somente usuário atual</li>
+            <li><span class="meta-label">Inicialização:</span> opcional com o Windows</li>
+            <li><span class="meta-label">Suporte:</span> fluxo de pareamento por QR no app Android</li>
+          </ul>
+
+          <div class="hash-box">
+            <strong>SHA-256 do instalador</strong>
+            <pre>85EA521D5A1B6490436A89997500E4CF4A4062179CED060E66F16B7DB68959CF</pre>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <section class="section" id="requirements">
+      <div class="container">
+        <div class="grid-3">
+          <div class="card pad">
+            <div class="step-number">1</div>
+            <h2>Pré-requisitos</h2>
+            <ul class="quick-list">
+              <li>Windows 10 ou 11.</li>
+              <li>Conexão com internet para autenticação e sincronização.</li>
+              <li>CLI compatível já autenticado no computador.</li>
+              <li>Computador que você controla e confia.</li>
+            </ul>
+          </div>
+
+          <div class="card pad">
+            <div class="step-number">2</div>
+            <h2>Como instalar</h2>
+            <ul class="quick-list">
+              <li>Baixe o instalador nesta página.</li>
+              <li>Conclua a instalação local sem exigir admin.</li>
+              <li>Abra o Bridge ao final da instalação.</li>
+              <li>No computador, autentique o CLI compatível se ainda não estiver autenticado.</li>
+            </ul>
+          </div>
+
+          <div class="card pad">
+            <div class="step-number">3</div>
+            <h2>Como parear</h2>
+            <ul class="quick-list">
+              <li>No Bridge, autorize apenas as pastas e projetos que deseja expor ao celular.</li>
+              <li>Gere o QR Code localmente.</li>
+              <li>No app Android, toque em “Parear” ou “Escanear QR”.</li>
+              <li>Confirme o vínculo somente se o computador for realmente seu.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="security">
+      <div class="container grid-2">
+        <div class="card pad">
+          <p class="eyebrow">Segurança</p>
+          <h2>O que verificar antes de executar</h2>
+          <ul class="policy-list">
+            <li>Baixe somente desta página oficial ou do repositório oficial do projeto.</li>
+            <li>Confira o hash SHA-256 do instalador antes de abrir.</li>
+            <li>Espere aviso do Windows SmartScreen enquanto o instalador não tiver assinatura digital.</li>
+            <li>Não escaneie QR Codes enviados por terceiros ou exibidos em computadores de outras pessoas.</li>
+          </ul>
+
+          <div class="warning">
+            <strong>Aviso importante.</strong>
+            <p class="small">
+              O Bridge pode executar ações remotas no computador pareado. Use somente em máquinas, contas e workspaces que você controla.
+            </p>
+          </div>
+        </div>
+
+        <div class="card pad">
+          <p class="eyebrow">Políticas</p>
+          <h2>Compromissos desta distribuição</h2>
+          <ul class="policy-list">
+            <li>O pareamento deve acontecer apenas com consentimento explícito do dono do computador.</li>
+            <li>O acesso remoto deve ficar restrito às pastas autorizadas no painel local do Bridge.</li>
+            <li>O tráfego entre app e Bridge usa envelopes cifrados; ainda assim, a segurança do endpoint depende do seu próprio computador.</li>
+            <li>As páginas de <a href="privacy.html">privacidade</a>, <a href="security.html">segurança</a> e <a href="terms.html">termos</a> fazem parte da distribuição oficial.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <span>Interestellar Remote Bridge · distribuição oficial do companion para PC</span>
+      <span>
+        <a href="privacy.html">Privacidade</a> ·
+        <a href="security.html">Segurança</a> ·
+        <a href="terms.html">Termos</a>
+      </span>
+    </div>
+  </footer>
+</body>
+</html>
