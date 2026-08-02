@@ -39,12 +39,14 @@ private enum class SubscriptionPlan(val productId: String) {
 @Composable
 fun SubscriptionScreen(
     billingState: BillingUiState,
+    subscriptionActive: Boolean,
     onPurchase: (String) -> Unit,
     onManageSubscription: () -> Unit,
     onBack: () -> Unit,
 ) {
     var selectedPlan by rememberSaveable { mutableStateOf(SubscriptionPlan.ANNUAL) }
-    val active = billingState.activeProductId != null
+    val purchaseDetected = billingState.activeProductId != null
+    val active = subscriptionActive
     val monthlyPrice = billingState.priceLabel(
         BillingManager.MONTHLY_PRODUCT_ID,
         "R$ 19,90",
@@ -117,6 +119,23 @@ fun SubscriptionScreen(
                         fontWeight = FontWeight.Bold,
                     )
                     Text("Seu plano é administrado com segurança pelo Google Play.")
+                    Button(
+                        onClick = onManageSubscription,
+                        modifier = Modifier.fillMaxWidth(),
+                    ) {
+                        Text("Gerenciar assinatura")
+                    }
+                }
+            }
+        } else if (purchaseDetected) {
+            item {
+                GlassPanel(modifier = Modifier.fillMaxWidth(), accent = BrandGold) {
+                    Text(
+                        "Compra detectada, validação em andamento",
+                        style = MaterialTheme.typography.titleLarge,
+                        fontWeight = FontWeight.Bold,
+                    )
+                    Text("O Google Play reconheceu a compra, mas o acesso Pro só é liberado após a validação segura no servidor.")
                     Button(
                         onClick = onManageSubscription,
                         modifier = Modifier.fillMaxWidth(),

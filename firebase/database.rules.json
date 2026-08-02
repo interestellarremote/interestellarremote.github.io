@@ -20,8 +20,8 @@
         "commands": {
           ".read": "auth != null && auth.token.deviceId === $deviceId && auth.token.type === 'bridge'",
           "$commandId": {
-            ".write": "auth != null && (root.child('deviceOwners').child($deviceId).val() === auth.uid || auth.token.deviceId === $deviceId)",
-            ".validate": "!newData.exists() || (newData.child('deviceId').val() === $deviceId && newData.child('messageId').val() === $commandId && newData.child('version').val() === 1 && newData.child('expiresAt').isNumber() && newData.child('expiresAt').val() > now && newData.child('ciphertext').isString())"
+            ".write": "auth != null && ((auth.token.deviceId === $deviceId && auth.token.type === 'bridge') || (root.child('deviceOwners').child($deviceId).val() === auth.uid && (!newData.exists() || newData.child('type').val() !== 'SEND_PROMPT')))",
+            ".validate": "!newData.exists() || (newData.child('deviceId').val() === $deviceId && newData.child('messageId').val() === $commandId && newData.child('version').val() === 1 && newData.child('type').isString() && newData.child('expiresAt').isNumber() && newData.child('expiresAt').val() > now && newData.child('ciphertext').isString())"
           }
         },
         "events": {

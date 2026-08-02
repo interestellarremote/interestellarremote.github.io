@@ -44,8 +44,10 @@ fun RemoteApp(
     onPairingUri: (Uri) -> Unit,
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
-    LaunchedEffect(billingState.activeProductId) {
-        viewModel.updateProStatus(billingState.activeProductId != null)
+    LaunchedEffect(billingState.activeProductId, billingState.message, state.signedIn) {
+        if (state.signedIn) {
+            viewModel.refreshAccessStatus()
+        }
     }
     AntigravityRemoteTheme {
         CompositionLocalProvider(LocalContentColor provides MaterialTheme.colorScheme.onBackground) {
@@ -141,6 +143,7 @@ fun RemoteApp(
                             composable(Routes.SUBSCRIPTION) {
                                 SubscriptionScreen(
                                     billingState = billingState,
+                                    subscriptionActive = state.isPro && !state.devForcePro,
                                     onPurchase = onPurchase,
                                     onManageSubscription = onManageSubscription,
                                     onBack = { nav.popBackStack() },

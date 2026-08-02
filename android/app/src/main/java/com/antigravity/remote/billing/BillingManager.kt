@@ -15,6 +15,7 @@ import com.android.billingclient.api.Purchase
 import com.android.billingclient.api.PurchasesUpdatedListener
 import com.android.billingclient.api.QueryProductDetailsParams
 import com.android.billingclient.api.QueryPurchasesParams
+import com.google.firebase.functions.FirebaseFunctions
 import java.security.MessageDigest
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -42,6 +43,7 @@ class BillingManager(context: Context) {
     }
 
     private val appContext = context.applicationContext
+    private val functions = FirebaseFunctions.getInstance()
     private val _state = MutableStateFlow(BillingUiState())
     val state: StateFlow<BillingUiState> = _state.asStateFlow()
 
@@ -183,7 +185,7 @@ class BillingManager(context: Context) {
         _state.value = _state.value.copy(
             activeProductId = purchase.products.firstOrNull(),
             isPending = false,
-            message = "Assinatura ativada. Aproveite o Interestellar Pro!",
+            message = "Compra detectada. Validando sua assinatura com segurança...",
         )
         if (!purchase.isAcknowledged) {
             billingClient.acknowledgePurchase(
@@ -196,10 +198,35 @@ class BillingManager(context: Context) {
                 }
             }
         }
+        syncPurchaseWithServer(purchase)
     }
 
     private fun publishMessage(message: String) {
         _state.value = _state.value.copy(message = message)
+    }
+
+    private fun syncPurchaseWithServer(purchase: Purchase) {
+        val productId = purchase.products.firstOrNull()
+        functions.getHttpsCallable("syncSubscriptionPurchase")
+            .call(
+                mapOf(
+                    "purchaseToken" to purchase.purchaseToken,
+                    "productId" to productId,
+                ),
+            )
+            .addOnSuccessListener {
+                _state.value = _state.value.copy(
+                    activeProductId = productId,
+                    isPending = false,
+                    message = "Assinatura validada com sucesso. O acesso Pro já pode ser liberado.",
+                )
+            }
+            .addOnFailureListener { error ->
+                publishMessage(
+                    error.message
+                        ?: "A compra foi reconhecida, mas a validação segura da assinatura falhou no servidor.",
+                )
+            }
     }
 
     private fun obfuscateAccountId(accountId: String): String =

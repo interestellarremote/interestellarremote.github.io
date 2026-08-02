@@ -85,11 +85,13 @@ fun SettingsScreen(
             onOpenSubscription = onOpenSubscription,
         )
     }
-    item {
-        DevTestCard(
-            state = state,
-            onToggleDevPro = vm::setDevForcePro,
-        )
+    if (BuildConfig.DEBUG) {
+        item {
+            DevTestCard(
+                state = state,
+                onToggleDevPro = vm::setDevForcePro,
+            )
+        }
     }
     item {
         GlassPanel(modifier = Modifier.fillMaxWidth(), accent = BrandTeal) {
@@ -139,7 +141,8 @@ private fun SubscriptionCard(
     onOpenSubscription: () -> Unit,
 ) {
     val active = state.isPro
-    val playStoreActive = billingState.activeProductId != null
+    val playStoreActive = state.isPro && !state.devForcePro
+    val purchaseDetected = billingState.activeProductId != null
     GlassPanel(
         modifier = Modifier.fillMaxWidth(),
         accent = if (active) BrandGold else MaterialTheme.colorScheme.primary,
@@ -148,6 +151,7 @@ private fun SubscriptionCard(
         Text(
             when {
                 playStoreActive -> "Sua assinatura está ativa via Google Play."
+                purchaseDetected -> "Compra detectada. Aguardando validação segura da assinatura no servidor."
                 state.devForcePro -> "Modo Pro ativado para testes (Dev Override)."
                 else -> "Plano Gratuito: 10 mensagens/dia. Assine o Pro para mensagens ilimitadas (7 dias grátis)."
             },

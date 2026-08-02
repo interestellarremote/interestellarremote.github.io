@@ -30,6 +30,13 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 data class DeviceSummary(val id: String, val name: String, val online: Boolean, val lastSeen: Long)
 data class DecryptedEvent(val envelope: Envelope, val payload: JSONObject)
 data class HistoryBackup(val conversation: ConversationEntity, val messages: List<MessageEntity>)
+data class AccessStatus(
+    val proActive: Boolean,
+    val dailyMessageCount: Int,
+    val dailyMessageLimit: Int,
+    val quotaDate: String,
+    val productId: String? = null,
+)
 
 @Singleton
 class RemoteRepository @Inject constructor(
@@ -41,6 +48,8 @@ class RemoteRepository @Inject constructor(
     private val sequences: SequenceStore,
     @ApplicationContext private val context: Context,
 ) {
+    private fun requireUid(): String = requireNotNull(auth.currentUser?.uid) { "Faça login primeiro" }
+
     suspend fun claimPairing(payload: PairingPayload) {
         require(payload.expiresAt > System.currentTimeMillis()) { "QR Code expirado" }
         requireNotNull(auth.currentUser) { "Faça login antes de parear" }
@@ -249,19 +258,56 @@ class RemoteRepository @Inject constructor(
         database.getReference("mailboxes/$deviceId/events").updateChildren(removals).await()
     }
 
+    private suspend fun buildEnvelope(
+        deviceId: String,
+        conversationId: String,
+        type: MessageType,
+        payload: JSONObject,
+    ): Envelope {
+        val online = database.getReference("deviceStatus/$deviceId/online").get().await().getValue(Boolean::class.java) == true
+        require(online) { "O computador está offline; o comando não foi enfileirado" }
+        val keyVersion = keyStore.currentVersion(deviceId)
+        val rootKey = requireNotNull(keyStore.load(deviceId, keyVersion)) { "Dispositivo precisa ser pareado novamente" }
+        val sequence = sequences.next(deviceId, conversationId)
+        return CryptoEngine.encrypt(rootKey, deviceId, conversationId, sequence, type, payload, keyVersion = keyVersion)
+    }
+
+    private suspend fun writeEnvelope(envelope: Envelope) {
+        database.getReference("mailboxes/${envelope.deviceId}/commands/${envelope.messageId}").setValue(envelope.toMap()).await()
+    }
+
     suspend fun send(
         deviceId: String,
         conversationId: String,
         type: MessageType,
         payload: JSONObject,
     ) {
-        val online = database.getReference("deviceStatus/$deviceId/online").get().await().getValue(Boolean::class.java) == true
-        require(online) { "O computador está offline; o comando não foi enfileirado" }
-        val keyVersion = keyStore.currentVersion(deviceId)
-        val rootKey = requireNotNull(keyStore.load(deviceId, keyVersion)) { "Dispositivo precisa ser pareado novamente" }
-        val sequence = sequences.next(deviceId, conversationId)
-        val envelope = CryptoEngine.encrypt(rootKey, deviceId, conversationId, sequence, type, payload, keyVersion = keyVersion)
-        database.getReference("mailboxes/$deviceId/commands/${envelope.messageId}").setValue(envelope.toMap()).await()
+        val envelope = buildEnvelope(deviceId, conversationId, type, payload)
+        writeEnvelope(envelope)
+    }
+
+    suspend fun getAccessStatus(): AccessStatus {
+        val data = functions.getHttpsCallable("getAccessStatus").call().await().data as? Map<*, *>
+            ?: error("Resposta inválida do servidor para status de acesso")
+        return AccessStatus(
+            proActive = data["proActive"] as? Boolean ?: false,
+            dailyMessageCount = (data["dailyMessageCount"] as? Number)?.toInt() ?: 0,
+            dailyMessageLimit = (data["dailyMessageLimit"] as? Number)?.toInt() ?: 10,
+            quotaDate = data["quotaDate"] as? String ?: "",
+            productId = data["productId"] as? String,
+        )
+    }
+
+    suspend fun syncSubscriptionPurchase(purchaseToken: String, productId: String?): AccessStatus {
+        val data = functions.getHttpsCallable("syncSubscriptionPurchase").call(
+            mapOf(
+                "purchaseToken" to purchaseToken,
+                "productId" to productId,
+            ),
+        ).await().data as? Map<*, *>
+            ?: error("Resposta inválida do servidor para a assinatura")
+        val status = getAccessStatus()
+        return status.copy(productId = data["productId"] as? String ?: status.productId)
     }
 
     suspend fun sync(deviceId: String) = send(deviceId, "system", MessageType.SYNC, JSONObject())
@@ -353,17 +399,31 @@ class RemoteRepository @Inject constructor(
         prompt: String,
         model: String? = null,
         executionMode: String = "autonomous_project",
-    ) = send(
-        deviceId,
-        conversationId,
-        MessageType.SEND_PROMPT,
-        JSONObject()
-            .put("taskId", taskId)
-            .put("projectId", projectId)
-            .put("prompt", prompt)
-            .put("executionMode", executionMode)
-            .apply { if (model != null) put("model", model) },
-    )
+    ): AccessStatus {
+        requireUid()
+        val envelope = buildEnvelope(
+            deviceId,
+            conversationId,
+            MessageType.SEND_PROMPT,
+            JSONObject()
+                .put("taskId", taskId)
+                .put("projectId", projectId)
+                .put("prompt", prompt)
+                .put("executionMode", executionMode)
+                .apply { if (model != null) put("model", model) },
+        )
+        val data = functions.getHttpsCallable("dispatchPrompt").call(
+            mapOf("envelope" to envelope.toMap()),
+        ).await().data as? Map<*, *>
+            ?: error("Resposta inválida do servidor para o despacho do prompt")
+        return AccessStatus(
+            proActive = data["proActive"] as? Boolean ?: false,
+            dailyMessageCount = (data["dailyMessageCount"] as? Number)?.toInt() ?: 0,
+            dailyMessageLimit = (data["dailyMessageLimit"] as? Number)?.toInt() ?: 10,
+            quotaDate = data["quotaDate"] as? String ?: "",
+            productId = data["productId"] as? String,
+        )
+    }
 
     suspend fun cancelTurn(deviceId: String, conversationId: String, taskId: String?) =
         send(

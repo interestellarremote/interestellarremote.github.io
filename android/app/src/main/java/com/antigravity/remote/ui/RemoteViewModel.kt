@@ -3,6 +3,7 @@ package com.antigravity.remote.ui
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.SavedStateHandle
+import com.antigravity.remote.BuildConfig
 import com.antigravity.remote.data.*
 import com.google.firebase.auth.FirebaseAuth
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -153,10 +154,14 @@ class RemoteViewModel @Inject constructor(
             sessionStore.dailyMessageDate = today
             sessionStore.dailyMessageCount = 0
         }
+        val devOverrideEnabled = BuildConfig.DEBUG && sessionStore.devForcePro
+        if (!BuildConfig.DEBUG && sessionStore.devForcePro) {
+            sessionStore.devForcePro = false
+        }
         _state.value = _state.value.copy(
-            devForcePro = sessionStore.devForcePro,
+            devForcePro = devOverrideEnabled,
             dailyMessageCount = sessionStore.dailyMessageCount,
-            isPro = sessionStore.devForcePro,
+            isPro = devOverrideEnabled,
         )
         viewModelScope.launch {
             networkMonitor.isOnline.collect { online ->
@@ -172,6 +177,7 @@ class RemoteViewModel @Inject constructor(
             }
             if (restoredConversation != null) observeConversationMessages(restoredConversation)
             launchAction { repository.registerPushToken() }
+            refreshAccessStatus()
             viewModelScope.launch {
                 dao.pruneProcessedEvents(System.currentTimeMillis() - 8L * 24 * 60 * 60 * 1_000)
             }
@@ -296,6 +302,7 @@ class RemoteViewModel @Inject constructor(
         observeAudit()
         observeDevices()
         launchAction { repository.registerPushToken() }
+        refreshAccessStatus()
     }
 
     private fun observeDevices() {
@@ -373,6 +380,7 @@ class RemoteViewModel @Inject constructor(
         eventJobs.values.forEach(Job::cancel)
         eventJobs.clear()
         observeDevices()
+        refreshAccessStatus()
         _state.value.selectedDevice?.let { deviceId ->
             launchAction { repository.sync(deviceId) }
         }
@@ -959,6 +967,12 @@ class RemoteViewModel @Inject constructor(
     }
 
     fun setDevForcePro(enabled: Boolean) {
+        if (!BuildConfig.DEBUG) {
+            if (sessionStore.devForcePro) sessionStore.devForcePro = false
+            _state.value = _state.value.copy(devForcePro = false)
+            refreshAccessStatus()
+            return
+        }
         sessionStore.devForcePro = enabled
         _state.value = _state.value.copy(
             devForcePro = enabled,
@@ -966,13 +980,12 @@ class RemoteViewModel @Inject constructor(
         )
     }
 
-    fun updateProStatus(billingActive: Boolean) {
-        val isPro = billingActive || sessionStore.devForcePro
-        _state.value = _state.value.copy(
-            isPro = isPro,
-            devForcePro = sessionStore.devForcePro,
-            dailyMessageCount = sessionStore.dailyMessageCount,
-        )
+    fun refreshAccessStatus() {
+        if (auth.currentUser == null) return
+        viewModelScope.launch {
+            runCatching { repository.getAccessStatus() }
+                .onSuccess(::applyAccessStatus)
+        }
     }
 
     fun toggleTechnicalDetails() {
@@ -999,13 +1012,9 @@ class RemoteViewModel @Inject constructor(
             sessionStore.dailyMessageCount = 0
         }
 
-        val isProActive = state.isPro || sessionStore.devForcePro
+        val isProActive = state.isPro || (BuildConfig.DEBUG && sessionStore.devForcePro)
         if (!isProActive && sessionStore.dailyMessageCount >= state.dailyMessageLimit) {
             return fail(IllegalStateException("Limite diário de mensagens gratuito atingido (${state.dailyMessageLimit}/${state.dailyMessageLimit}). Assine o Interestellar Pro para uso ilimitado!"))
-        }
-
-        if (!isProActive) {
-            sessionStore.dailyMessageCount += 1
         }
 
         val taskId = UUID.randomUUID().toString()
@@ -1013,7 +1022,6 @@ class RemoteViewModel @Inject constructor(
             chat = state.chat + ChatLine("user", prompt),
             activeTurn = TurnProgressUi(taskId, state.conversationId, "sending", 0),
             draftText = "",
-            dailyMessageCount = sessionStore.dailyMessageCount,
         )
         viewModelScope.launch {
             dao.saveConversation(ConversationEntity(state.conversationId, device, project, prompt.take(48), System.currentTimeMillis()))
@@ -1026,7 +1034,7 @@ class RemoteViewModel @Inject constructor(
                 val now = System.currentTimeMillis()
                 dao.saveTask(TaskEntity(taskId, state.conversationId, device, project, prompt, "QUEUED", "sending", now, now))
                 dao.saveAudit(AuditEntity(UUID.randomUUID().toString(), taskId, state.conversationId, "PROMPT", "Instrução enviada", now))
-                repository.sendPrompt(
+                val accessStatus = repository.sendPrompt(
                     device,
                     project,
                     state.conversationId,
@@ -1035,6 +1043,7 @@ class RemoteViewModel @Inject constructor(
                     state.selectedModel,
                     state.executionMode,
                 )
+                applyAccessStatus(accessStatus)
             } catch (error: Exception) {
                 val existing = dao.task(taskId)
                 if (existing != null) dao.saveTask(
@@ -1047,6 +1056,9 @@ class RemoteViewModel @Inject constructor(
                     )
                 )
                 _state.value = _state.value.copy(activeTurn = null)
+                if (error.message?.contains("Limite diário", ignoreCase = true) == true) {
+                    runCatching { repository.getAccessStatus() }.onSuccess(::applyAccessStatus)
+                }
                 throw error
             }
         }
@@ -1127,4 +1139,16 @@ class RemoteViewModel @Inject constructor(
         _state.value = _state.value.copy(busy = false)
     }
     private fun fail(error: Throwable) { _state.value = _state.value.copy(error = error.message ?: "Erro inesperado", busy = false) }
+
+    private fun applyAccessStatus(status: AccessStatus) {
+        val devOverrideEnabled = BuildConfig.DEBUG && sessionStore.devForcePro
+        sessionStore.dailyMessageDate = status.quotaDate
+        sessionStore.dailyMessageCount = status.dailyMessageCount
+        _state.value = _state.value.copy(
+            isPro = status.proActive || devOverrideEnabled,
+            devForcePro = devOverrideEnabled,
+            dailyMessageCount = status.dailyMessageCount,
+            dailyMessageLimit = status.dailyMessageLimit,
+        )
+    }
 }
