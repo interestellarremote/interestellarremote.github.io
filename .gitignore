@@ -14,10 +14,12 @@ __pycache__/
 bridge/data/
 bridge/dist/
 bridge/dist-publish/
+bridge/dist-release-*/
 bridge/build-*/
 bridge/*.spec
 bridge/installer/Output/
 firebase/.firebase/
+firebase/public/
 firebase/functions/lib/
 firebase/functions/node_modules/
 firebase/**/*-debug.log
