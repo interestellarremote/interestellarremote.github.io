@@ -87,16 +87,27 @@ def find_agy_cli() -> Path:
 
 def list_available_models() -> list[str]:
     """Return model identifiers advertised by the installed Antigravity CLI."""
-    creationflags = subprocess.CREATE_NO_WINDOW if os.name == "nt" else 0
-    result = subprocess.run(
-        [str(find_agy_cli()), "models"],
-        capture_output=True,
-        text=True,
-        timeout=15,
-        creationflags=creationflags,
-        check=True,
-    )
-    return [line.strip() for line in result.stdout.splitlines() if line.strip()]
+    fallback_models = [
+        "gemini-2.5-flash",
+        "gemini-2.0-flash",
+        "gemini-1.5-pro",
+        "gemini-1.5-flash",
+        "claude-3-5-sonnet-20241022",
+    ]
+    try:
+        creationflags = subprocess.CREATE_NO_WINDOW if os.name == "nt" else 0
+        result = subprocess.run(
+            [str(find_agy_cli()), "models"],
+            capture_output=True,
+            text=True,
+            timeout=15,
+            creationflags=creationflags,
+            check=True,
+        )
+        models = [line.strip() for line in result.stdout.splitlines() if line.strip()]
+        return models if models else fallback_models
+    except Exception:
+        return fallback_models
 
 def normalize_model_name(raw_model: str) -> str:
     """Normalize the UI model string to the canonical API model ID."""
@@ -189,7 +200,7 @@ class AntigravityCliSession:
         execution_mode: str = "autonomous_project",
     ) -> list[str]:
         executable = cli or find_agy_cli()
-        raw_model = model or os.environ.get("AGY_MODEL", "gemini-3.6-flash-medium")
+        raw_model = model or os.environ.get("AGY_MODEL", "gemini-2.5-flash")
         selected_model = normalize_model_name(raw_model)
         is_non_editing_mode = execution_mode in {"read_only", "plan"}
         cli_mode = "plan" if is_non_editing_mode else "accept-edits"

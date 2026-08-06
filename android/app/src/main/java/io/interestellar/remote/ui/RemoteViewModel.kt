@@ -30,17 +30,11 @@ private const val SAVED_CONVERSATION = "selected_conversation"
 private const val SAVED_MODEL = "selected_model"
 
 val DefaultAvailableModels = listOf(
-    "gemini-3.6-flash-high",
-    "gemini-3.6-flash-medium",
-    "gemini-3.6-flash-low",
-    "gemini-3.5-flash-high",
-    "gemini-3.5-flash-medium",
-    "gemini-3.5-flash-low",
-    "gemini-3.1-pro-high",
-    "gemini-3.1-pro-low",
-    "claude-sonnet-4-6",
-    "claude-opus-4-6-thinking",
-    "gpt-oss-120b-medium",
+    "gemini-2.5-flash",
+    "gemini-2.0-flash",
+    "gemini-1.5-pro",
+    "gemini-1.5-flash",
+    "claude-3-5-sonnet-20241022",
 )
 
 data class ChatLine(val role: String, val text: String, val kind: String = "text")
@@ -93,7 +87,7 @@ data class RemoteUiState(
     val tasks: List<TaskEntity> = emptyList(),
     val bridgeVersion: String? = null,
     val protocolVersion: Int = 1,
-    val selectedModel: String = "gemini-3.6-flash-medium",
+    val selectedModel: String = "gemini-2.5-flash",
     val availableModels: List<String> = DefaultAvailableModels,
     val executionMode: String = "autonomous_project",
     val draftText: String = "",
@@ -126,7 +120,7 @@ class RemoteViewModel @Inject constructor(
     private val restoredDevice = sessionStore.deviceId ?: savedState.get<String>(SAVED_DEVICE)
     private val restoredProject = sessionStore.projectId ?: savedState.get<String>(SAVED_PROJECT)
     private val restoredConversation = sessionStore.conversationId ?: savedState.get<String>(SAVED_CONVERSATION)
-    private val restoredModel = sessionStore.model ?: savedState.get<String>(SAVED_MODEL) ?: "gemini-3.6-flash-medium"
+    private val restoredModel = sessionStore.model ?: savedState.get<String>(SAVED_MODEL) ?: "gemini-2.5-flash"
     private val _state = MutableStateFlow(
         RemoteUiState(
             signedIn = auth.currentUser != null,
