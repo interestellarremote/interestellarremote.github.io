@@ -41,7 +41,7 @@ def test_plan_mode_keeps_skip_disabled_and_avoids_interactive_tools(tmp_path: Pa
     assert "--dangerously-skip-permissions" not in command
     assert "Não use run_command" in command[-1]
     assert "Não use Edit" in command[-1]
-    assert command[-1].endswith("[TAREFA DO USUÁRIO]\ninspect")
+    assert command[-1].endswith("[TAREFA DO USUÁRIO]\n[MODELO ATIVO: gemini-3.6-flash-medium]\n\ninspect")
 
 
 def test_autonomous_mode_is_scoped_and_does_not_request_approval(tmp_path: Path) -> None:
@@ -54,7 +54,7 @@ def test_autonomous_mode_is_scoped_and_does_not_request_approval(tmp_path: Path)
     assert "Execute as alterações" in command[-1]
     assert "sem pedir aprovação" in command[-1]
     assert str(tmp_path.resolve()) in command[-1]
-    assert command[-1].endswith("[TAREFA DO USUÁRIO]\nimplement")
+    assert command[-1].endswith("[TAREFA DO USUÁRIO]\n[MODELO ATIVO: gemini-3.6-flash-medium]\n\nimplement")
 
 
 def test_existing_agy_project_is_reused_for_workspace(

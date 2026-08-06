@@ -2,12 +2,16 @@
 
 ## Produtos
 
-Cadastre os dois produtos como assinaturas no Google Play Console, usando exatamente estes IDs:
+Cadastre uma assinatura no Google Play Console usando este ID de produto:
 
-- `interestellar_pro_monthly` — R$ 19,90 por mês
-- `interestellar_pro_annual` — R$ 159,90 por ano
+- `interstellar_remote_pro`
 
-Configure uma oferta de teste grátis de 7 dias para cada plano. O teste é controlado pelo Google Play, então o app não usa um contador local que poderia ser alterado.
+Dentro dela, cadastre estes planos básicos:
+
+- `monthly` — R$ 19,90 por mês
+- `yearly` — R$ 159,90 por ano
+
+Se quiser teste grátis, ele deve ser configurado como oferta dentro do plano básico compatível. O teste é controlado pelo Google Play, então o app não usa um contador local que poderia ser alterado.
 
 ## Fluxo já preparado no aplicativo
 

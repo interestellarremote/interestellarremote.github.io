@@ -7,7 +7,7 @@ import time
 from typing import Any
 from uuid import uuid4
 
-from .agent_runtime import SessionRegistry, list_available_models
+from .agent_runtime import SessionRegistry, list_available_models, normalize_model_name
 from .builds import BuildManager
 from .crypto import EnvelopeCrypto
 from .database import Database
@@ -172,6 +172,7 @@ class BridgeService:
             raise ValueError("SEND_PROMPT requires projectId and prompt")
         project = self.database.get_project(payload.project_id)
         task_id = payload.task_id or str(envelope.message_id)
+        effective_model = payload.model or os.environ.get("AGY_MODEL", "gemini-3.6-flash-medium")
         self.database.update_task(task_id, "STARTING", "starting")
         runtime_id = self.database.get_runtime_conversation_id(envelope.conversation_id)
         session = self.sessions.get(envelope.conversation_id, project.root, runtime_id)
@@ -199,7 +200,7 @@ class BridgeService:
         await self.emit(
             envelope.conversation_id,
             MessageType.HEARTBEAT,
-            {"scope": "turn", "state": "starting", "elapsedSeconds": 0, "taskId": task_id},
+            {"scope": "turn", "state": "starting", "elapsedSeconds": 0, "taskId": task_id, "model": effective_model},
         )
         progress_task = asyncio.create_task(report_progress())
         try:
@@ -222,6 +223,7 @@ class BridgeService:
                 elif kind == "complete":
                     elapsed = int(time.monotonic() - started_at)
                     self.database.update_task(task_id, "COMPLETE", "complete", elapsed)
+                    data["model"] = effective_model
                 elif kind == "error":
                     elapsed = int(time.monotonic() - started_at)
                     status, phase, error = self._task_state_from_error(

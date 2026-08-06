@@ -22,7 +22,8 @@ Os passos abaixo servem para provisionar outro projeto, se necessário.
 1. Crie um projeto no Firebase e ative o plano que permita Cloud Functions e Storage.
 2. Em Authentication, habilite o provedor Google.
 3. Crie Realtime Database, Firestore e Storage na mesma região sempre que possível.
-4. Adicione um aplicativo Android com o pacote `com.antigravity.remote`, cadastre SHA-1/SHA-256 e baixe `google-services.json` para `android/app/`.
+4. Adicione um aplicativo Android com o pacote `io.interestellar.remote`, cadastre SHA-1/SHA-256 e baixe `google-services.json` para `android/app/`.
+   Se você ainda mantiver builds legados com `com.antigravity.remote`, replique as mesmas SHAs também nesse app Android do Firebase.
 5. Configure o projeto padrão em `firebase/.firebaserc`.
 6. Instale a CLI (`npm install -g firebase-tools`), autentique (`firebase login`) e execute:
 
@@ -54,7 +55,7 @@ O conteúdo do site inclui:
 - páginas de privacidade, segurança e termos de uso.
 
 Se o repositório ou o usuário do GitHub mudarem, atualize as URLs em
-`android/app/src/main/java/com/antigravity/remote/DownloadLinks.kt`.
+`android/app/src/main/java/io/interestellar/remote/DownloadLinks.kt`.
 
 ## 3. Ponte Windows
 

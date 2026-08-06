@@ -8,6 +8,30 @@
         ".write": false
       }
     },
+    "devices": {
+      "$deviceId": {
+        ".read": "auth != null && root.child('deviceOwners').child($deviceId).val() === auth.uid",
+        ".write": "auth != null && auth.token.deviceId === $deviceId && auth.token.type === 'bridge'"
+      }
+    },
+    "builds": {
+      "$deviceId": {
+        ".read": "auth != null && root.child('deviceOwners').child($deviceId).val() === auth.uid",
+        ".write": "auth != null && auth.token.deviceId === $deviceId && auth.token.type === 'bridge'"
+      }
+    },
+    "approvals": {
+      "$deviceId": {
+        ".read": "auth != null && root.child('deviceOwners').child($deviceId).val() === auth.uid",
+        ".write": "auth != null && (root.child('deviceOwners').child($deviceId).val() === auth.uid || (auth.token.deviceId === $deviceId && auth.token.type === 'bridge'))"
+      }
+    },
+    "teamChat": {
+      "$projectId": {
+        ".read": "auth != null",
+        ".write": "auth != null"
+      }
+    },
     "deviceStatus": {
       "$deviceId": {
         ".read": "auth != null && root.child('deviceOwners').child($deviceId).val() === auth.uid",

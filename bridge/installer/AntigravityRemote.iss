@@ -1,5 +1,5 @@
 #define MyAppName "Interestellar Remote Bridge"
-#define MyAppVersion "0.2.6"
+#define MyAppVersion "0.2.7"
 #define MyAppExeName "AntigravityRemote.exe"
 
 [Setup]
@@ -8,7 +8,7 @@ AppName={#MyAppName}
 AppVersion={#MyAppVersion}
 DefaultDirName={localappdata}\Programs\Antigravity Remote
 PrivilegesRequired=lowest
-OutputBaseFilename=InterestellarRemoteSetup-0.2.6
+OutputBaseFilename=InterestellarRemoteSetup-0.2.7
 Compression=lzma2
 SolidCompression=yes
 

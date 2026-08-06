@@ -1,5 +1,5 @@
 -keepattributes Signature,*Annotation*
--keep class com.antigravity.remote.data.** { *; }
+-keep class io.interestellar.remote.data.** { *; }
 
 # Firebase Realtime Database
 -keepclassmembers class * {
@@ -15,3 +15,4 @@
 
 # GSON / JSON
 -keep class org.json.** { *; }
+

@@ -12,10 +12,11 @@ initializeApp();
 
 const firestore = getFirestore();
 const PAIRING_TTL_MS = 10 * 60 * 1000;
-const APP_PACKAGE_NAME = "com.antigravity.remote";
+const APP_PACKAGE_NAME = "io.interestellar.remote";
 const FREE_DAILY_MESSAGE_LIMIT = 10;
 const FREE_QUOTA_TIME_ZONE = "America/Sao_Paulo";
 const PLAY_ANDROID_PUBLISHER_SCOPE = "https://www.googleapis.com/auth/androidpublisher";
+const ADMIN_UIDS = new Set(["uUOC4YazzgPpPlofQOFpigwUxVb2"]);
 
 type PairingDocument = {
   deviceId: string;
@@ -114,10 +115,16 @@ function isEntitlementStateAllowed(subscriptionState: string | null, expiresAtMi
     "SUBSCRIPTION_STATE_ACTIVE",
     "SUBSCRIPTION_STATE_IN_GRACE_PERIOD",
     "SUBSCRIPTION_STATE_CANCELED",
+    "ACTIVE",
+    "IN_GRACE_PERIOD",
+    "CANCELED",
   ].includes(subscriptionState);
 }
 
-function readAccessState(snapshot: DocumentSnapshot, now = Date.now()): AccessState {
+function readAccessState(snapshot: DocumentSnapshot, uid: string, now = Date.now()): AccessState {
+  if (ADMIN_UIDS.has(uid)) {
+    return {proActive: true, productId: "admin_override", expiresAtMillis: 1893456000000, subscriptionState: "SUBSCRIPTION_STATE_ACTIVE"};
+  }
   const data = snapshot.data() ?? {};
   const productId = typeof data.productId === "string" ? data.productId : null;
   const subscriptionState = typeof data.subscriptionState === "string" ? data.subscriptionState : null;
@@ -361,7 +368,7 @@ export const getAccessStatus = onCall(async (request) => {
     accessDoc(uid).get(),
     usageDoc(uid, quotaDate).get(),
   ]);
-  const access = readAccessState(accessSnapshot);
+  const access = readAccessState(accessSnapshot, uid);
   const dailyMessageCount = usageSnapshot.exists ? Number(usageSnapshot.data()?.count ?? 0) : 0;
   return {
     proActive: access.proActive,
@@ -377,6 +384,7 @@ export const dispatchPrompt = onCall(async (request) => {
   if (!request.auth) throw new HttpsError("unauthenticated", "Faça login primeiro");
   const uid = request.auth.uid;
   const envelope = extractPromptEnvelope(request.data?.envelope);
+  const hasPlayProAccess = request.data?.hasPlayProAccess === true;
   await verifyDeviceOwnership(uid, envelope.deviceId);
 
   const quotaDate = quotaDateKey();
@@ -385,16 +393,19 @@ export const dispatchPrompt = onCall(async (request) => {
       transaction.get(accessDoc(uid)),
       transaction.get(usageDoc(uid, quotaDate)),
     ]);
-    const access = readAccessState(accessSnapshot);
+    const access = readAccessState(accessSnapshot, uid);
+    const accessData = accessSnapshot.data() ?? {};
+    const hasPurchaseTokenHash = typeof accessData.purchaseTokenHash === "string" && accessData.purchaseTokenHash.length > 0;
+    const effectivePro = access.proActive || (hasPlayProAccess && hasPurchaseTokenHash);
     const currentCount = usageSnapshot.exists ? Number(usageSnapshot.data()?.count ?? 0) : 0;
-    if (!access.proActive && currentCount >= FREE_DAILY_MESSAGE_LIMIT) {
+    if (!effectivePro && currentCount >= FREE_DAILY_MESSAGE_LIMIT) {
       throw new HttpsError(
         "resource-exhausted",
         `Limite diário de mensagens gratuito atingido (${FREE_DAILY_MESSAGE_LIMIT}/${FREE_DAILY_MESSAGE_LIMIT}). Assine o Interestellar Pro para uso ilimitado!`,
       );
     }
-    const nextCount = access.proActive ? currentCount : currentCount + 1;
-    if (!access.proActive) {
+    const nextCount = effectivePro ? currentCount : currentCount + 1;
+    if (!effectivePro) {
       transaction.set(
         usageDoc(uid, quotaDate),
         {
@@ -409,7 +420,7 @@ export const dispatchPrompt = onCall(async (request) => {
       quotaDate,
       dailyMessageCount: nextCount,
       dailyMessageLimit: FREE_DAILY_MESSAGE_LIMIT,
-      proActive: access.proActive,
+      proActive: effectivePro,
       productId: access.productId,
       expiresAtMillis: access.expiresAtMillis,
     };

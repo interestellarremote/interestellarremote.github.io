@@ -1,0 +1,149 @@
+{
+  "project_info": {
+    "project_number": "1007437471970",
+    "firebase_url": "https://gen-lang-client-0120188776-default-rtdb.firebaseio.com",
+    "project_id": "gen-lang-client-0120188776",
+    "storage_bucket": "gen-lang-client-0120188776.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1007437471970:android:1557f5938e5366d9c77ebb",
+        "android_client_info": {
+          "package_name": "com.antigravity.remote"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1007437471970-5gike5gdrdal67m10v86elfjd0qb8jeq.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.antigravity.remote",
+            "certificate_hash": "035399b39ae0c786a91845017dfd252431770fa0"
+          }
+        },
+        {
+          "client_id": "1007437471970-bjs0o5aiq51ak22unvr8tm1rvne91eff.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.antigravity.remote",
+            "certificate_hash": "7548708ad2251a1c54b532e69e02e6e150b96115"
+          }
+        },
+        {
+          "client_id": "1007437471970-hk8aeninvf1tmovrnh4kuhrk7m4699ba.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.antigravity.remote",
+            "certificate_hash": "ace6e32d724896c3984dd720a9fdb1ba15b33aba"
+          }
+        },
+        {
+          "client_id": "1007437471970-i8993j4cv6fgs09mgqh8fv67vikb6619.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.antigravity.remote",
+            "certificate_hash": "f550db7a2d02993071964e8beed409048e350ee4"
+          }
+        },
+        {
+          "client_id": "1007437471970-mfkj7rbpd6ctsgh7u3dfgqhd6thnii26.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.antigravity.remote",
+            "certificate_hash": "3b51014839b62833f5037f5858006af5c5567ec0"
+          }
+        },
+        {
+          "client_id": "1007437471970-fr2f6os1nk2kt725m95ac4bs842ure5u.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCaGW0y2se8NStmWVTdxHFeErfYcEzqIOM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1007437471970-fr2f6os1nk2kt725m95ac4bs842ure5u.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1007437471970:android:712a56e282b711d9c77ebb",
+        "android_client_info": {
+          "package_name": "io.interestellar.remote"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1007437471970-52v7idqd91n499cnu54naltd79lahqsa.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "io.interestellar.remote",
+            "certificate_hash": "7548708ad2251a1c54b532e69e02e6e150b96115"
+          }
+        },
+        {
+          "client_id": "1007437471970-8sbco985taqfmkh4bvi8j29o41hajsda.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "io.interestellar.remote",
+            "certificate_hash": "3b51014839b62833f5037f5858006af5c5567ec0"
+          }
+        },
+        {
+          "client_id": "1007437471970-9rl0ln5f2rtvri9o4s9i4t4q3ruu7ast.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "io.interestellar.remote",
+            "certificate_hash": "ace6e32d724896c3984dd720a9fdb1ba15b33aba"
+          }
+        },
+        {
+          "client_id": "1007437471970-ees4g4jt0i8hsmp1rebsd5dri6snej27.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "io.interestellar.remote",
+            "certificate_hash": "035399b39ae0c786a91845017dfd252431770fa0"
+          }
+        },
+        {
+          "client_id": "1007437471970-jb557cffrhl2cb7buef98hlnjectb4ur.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "io.interestellar.remote",
+            "certificate_hash": "f550db7a2d02993071964e8beed409048e350ee4"
+          }
+        },
+        {
+          "client_id": "1007437471970-fr2f6os1nk2kt725m95ac4bs842ure5u.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCaGW0y2se8NStmWVTdxHFeErfYcEzqIOM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1007437471970-fr2f6os1nk2kt725m95ac4bs842ure5u.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

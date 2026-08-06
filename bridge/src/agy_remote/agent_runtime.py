@@ -98,6 +98,23 @@ def list_available_models() -> list[str]:
     )
     return [line.strip() for line in result.stdout.splitlines() if line.strip()]
 
+def normalize_model_name(raw_model: str) -> str:
+    """Normalize the UI model string to the canonical API model ID."""
+    mapping = {
+        "gemini-3.1-pro-high": "gemini-3.1-pro",
+        "gemini-3.1-pro-low": "gemini-3.1-pro",
+        "gemini-3.5-flash-high": "gemini-3.5-flash",
+        "gemini-3.5-flash-medium": "gemini-3.5-flash",
+        "gemini-3.5-flash-low": "gemini-3.5-flash",
+        "gemini-3.6-flash-high": "gemini-3.6-flash",
+        "gemini-3.6-flash-medium": "gemini-3.6-flash-medium",
+        "gemini-3.6-flash-low": "gemini-3.6-flash",
+        "claude-sonnet-4-6": "claude-sonnet-4.6",
+        "claude-opus-4-6-thinking": "claude-opus-4.6",
+        "gpt-oss-120b-medium": "gpt-120b",
+    }
+    return mapping.get(raw_model, raw_model)
+
 
 class AntigravityCliSession:
     """Runs account-authenticated Antigravity CLI turns for one remote conversation."""
@@ -172,16 +189,17 @@ class AntigravityCliSession:
         execution_mode: str = "autonomous_project",
     ) -> list[str]:
         executable = cli or find_agy_cli()
-        selected_model = model or os.environ.get("AGY_MODEL", "gemini-3.6-flash-medium")
+        raw_model = model or os.environ.get("AGY_MODEL", "gemini-3.6-flash-medium")
+        selected_model = normalize_model_name(raw_model)
         is_non_editing_mode = execution_mode in {"read_only", "plan"}
         cli_mode = "plan" if is_non_editing_mode else "accept-edits"
         if is_non_editing_mode:
-            effective_prompt = f"{_NON_INTERACTIVE_PLAN_POLICY}{prompt}"
+            effective_prompt = f"{_NON_INTERACTIVE_PLAN_POLICY}[MODELO ATIVO: {selected_model}]\n\n{prompt}"
         elif execution_mode == "autonomous_project":
             policy = _AUTONOMOUS_PROJECT_POLICY.format(root=self.root)
-            effective_prompt = f"{policy}{prompt}"
+            effective_prompt = f"{policy}[MODELO ATIVO: {selected_model}]\n\n{prompt}"
         else:
-            effective_prompt = prompt
+            effective_prompt = f"[MODELO ATIVO: {selected_model}]\n\n{prompt}"
         args = [
             str(executable),
             "--print-timeout=30m",
