@@ -88,11 +88,17 @@ def find_agy_cli() -> Path:
 def list_available_models() -> list[str]:
     """Return model identifiers advertised by the installed Antigravity CLI."""
     fallback_models = [
-        "gemini-2.5-flash",
-        "gemini-2.0-flash",
-        "gemini-1.5-pro",
-        "gemini-1.5-flash",
-        "claude-3-5-sonnet-20241022",
+        "gemini-3.6-flash-high",
+        "gemini-3.6-flash-medium",
+        "gemini-3.6-flash-low",
+        "gemini-3.5-flash-high",
+        "gemini-3.5-flash-medium",
+        "gemini-3.5-flash-low",
+        "gemini-3.1-pro-high",
+        "gemini-3.1-pro-low",
+        "claude-sonnet-4-6",
+        "claude-opus-4-6-thinking",
+        "gpt-oss-120b-medium",
     ]
     try:
         creationflags = subprocess.CREATE_NO_WINDOW if os.name == "nt" else 0
@@ -111,20 +117,8 @@ def list_available_models() -> list[str]:
 
 def normalize_model_name(raw_model: str) -> str:
     """Normalize the UI model string to the canonical API model ID."""
-    mapping = {
-        "gemini-3.1-pro-high": "gemini-3.1-pro",
-        "gemini-3.1-pro-low": "gemini-3.1-pro",
-        "gemini-3.5-flash-high": "gemini-3.5-flash",
-        "gemini-3.5-flash-medium": "gemini-3.5-flash",
-        "gemini-3.5-flash-low": "gemini-3.5-flash",
-        "gemini-3.6-flash-high": "gemini-3.6-flash",
-        "gemini-3.6-flash-medium": "gemini-3.6-flash-medium",
-        "gemini-3.6-flash-low": "gemini-3.6-flash",
-        "claude-sonnet-4-6": "claude-sonnet-4.6",
-        "claude-opus-4-6-thinking": "claude-opus-4.6",
-        "gpt-oss-120b-medium": "gpt-120b",
-    }
-    return mapping.get(raw_model, raw_model)
+    # We no longer strip the suffixes, because the CLI actually requires them (e.g. gemini-3.1-pro-low)
+    return raw_model
 
 
 class AntigravityCliSession:
@@ -200,7 +194,7 @@ class AntigravityCliSession:
         execution_mode: str = "autonomous_project",
     ) -> list[str]:
         executable = cli or find_agy_cli()
-        raw_model = model or os.environ.get("AGY_MODEL", "gemini-2.5-flash")
+        raw_model = model or os.environ.get("AGY_MODEL", "gemini-3.6-flash-medium")
         selected_model = normalize_model_name(raw_model)
         is_non_editing_mode = execution_mode in {"read_only", "plan"}
         cli_mode = "plan" if is_non_editing_mode else "accept-edits"

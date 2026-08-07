@@ -17,7 +17,7 @@ $iscc = "C:\Users\ronal\AppData\Local\Programs\Inno Setup 6\ISCC.exe"
 & $iscc bridge\installer\AntigravityRemote.iss
 
 Write-Host "4. Generating SHA-256..."
-$exePath = "bridge\installer\Output\InterestellarRemoteSetup-0.2.7.exe"
+$exePath = "bridge\installer\Output\InterestellarRemoteSetup-0.2.8.exe"
 if (-not (Test-Path $exePath)) { throw "Installer not generated!" }
 
 $hash = (Get-FileHash -Algorithm SHA256 -Path $exePath).Hash
@@ -29,7 +29,7 @@ Write-Host "Size: $sizeBytes ($sizeFormatted)"
 
 Write-Host "5. Moving to downloads folder..."
 Copy-Item -Force $exePath downloads\
-Set-Content -Path downloads\SHA256SUMS.txt -Value "$hash *InterestellarRemoteSetup-0.2.7.exe"
+Set-Content -Path downloads\SHA256SUMS.txt -Value "$hash *InterestellarRemoteSetup-0.2.8.exe"
 
 Write-Host "6. Updating html with new size and hash..."
 $indexPaths = @("index.html", "site\index.html")
@@ -40,4 +40,5 @@ foreach ($idx in $indexPaths) {
     Set-Content -Path $idx -Value $content
 }
 
-Write-Host "Done! The new version 0.2.7 is ready in the downloads folder and html is updated."
+Write-Host "Done! The new version 0.2.8 is ready in the downloads folder and html is updated."
+
